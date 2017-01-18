@@ -126,13 +126,12 @@
   <cffunction name="stripHTMLAndTruncate" output="no" returnType="string">
     <cfargument name="str" required="yes">
     <cfset str = reReplaceNoCase(str, "<*style.*?>(.*?)</style>","","all")>
-        <cfset str = reReplaceNoCase(str, "<*script.*?>(.*?)</script>","","all")>
-        <cfset str = reReplaceNoCase(str, "<.*?>","","all")>
-        <cfset str = reReplaceNoCase(str, "^.*?>","")>
-        <cfset str = reReplaceNoCase(str, "<.*$","")>
-        <cfset str = left(str, 225)>
-        <cfset str = xmlformat(str)>
-    </script>
+    <cfset str = reReplaceNoCase(str, "<*script.*?>(.*?)</script>","","all")>
+    <cfset str = reReplaceNoCase(str, "<.*?>","","all")>
+    <cfset str = reReplaceNoCase(str, "^.*?>","")>
+    <cfset str = reReplaceNoCase(str, "<.*$","")>
+    <cfset str = left(str, 225)>
+    <cfset str = xmlformat(str)>
     <cfreturn str>
   </cffunction>
 </cfcomponent>
