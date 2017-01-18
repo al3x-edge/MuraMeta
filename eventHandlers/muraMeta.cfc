@@ -15,39 +15,35 @@
     <cfargument name="$">
     <cfset var NL = Chr(13) & Chr(10) />
     <cfset var openGraphMeta = "">
-    <cfset var protocol = 'http://'>
-    <cfif cgi.server_port_secure neq 0>
-      <cfset protocol = 'https://'>
-    </cfif>
 
     <cfswitch expression="#$.content().getValue('type')#">
       <cfdefaultcase>
-        <cfset openGraphMeta = '  <meta property="og:title" content="#$.content().getHtmlTitle()#" />#NL#  <meta property="og:type" content="article" />#NL#'>
+        <cfset openGraphMeta = '<meta property="og:title" content="#$.content().getHtmlTitle()#" />#NL#<meta property="og:type" content="article" />#NL#'>
 
-        <cfif len(stripHTMLandTruncate($.content().getValue("summary")))>
-          <cfset openGraphMeta &= '  <meta property="og:description" content="#stripHTMLAndTruncate($.content().getValue("summary"))#" />#NL#'>
-        <cfelseif len(stripHTMLandTruncate($.content().getValue("body")))>
-          <cfset openGraphMeta &= '  <meta property="og:description" content="#stripHTMLAndTruncate($.content().getValue("body"))#" />#NL#'>
+        <cfif len(stripHTMLandTruncate($.setDynamicContent($.getSummary())))>
+          <cfset openGraphMeta &= '<meta property="og:description" content="#stripHTMLAndTruncate($.setDynamicContent($.getSummary()))#" />#NL#'>
+        <cfelseif len(stripHTMLandTruncate($.setDynamicContent($.getBody())))>
+          <cfset openGraphMeta &= '<meta property="og:description" content="#stripHTMLAndTruncate($.setDynamicContent($.getBody()))#" />#NL#'>
         <cfelse>
-          <cfset openGraphMeta &='  <meta property="og:description" content="#$.siteConfig().getValue("facebookDefaultDescription")#" />#NL#'>
+          <cfset openGraphMeta &='<meta property="og:description" content="#$.siteConfig().getValue("facebookDefaultDescription")#" />#NL#'>
         </cfif>
 
-        <cfset openGraphMeta &= '  <meta property="og:site_name" content="#stripHTMLAndTruncate($.siteConfig('site'))#" />#NL#'>
+        <cfset openGraphMeta &= '<meta property="og:site_name" content="#stripHTMLAndTruncate($.siteConfig('site'))#" />#NL#'>
 
         <cfif $.content().getReleaseDate() neq ''>
-          <cfset openGraphMeta &= '  <meta property="article:published_time" content="#DateFormat($.content().getReleaseDate(), "yyyy-MM-dd")#T#TimeFormat($.content().getReleaseDate(), "hh:mm:00")#+Z" />#NL#'>
+          <cfset openGraphMeta &= '<meta property="article:published_time" content="#DateFormat($.content().getReleaseDate(), "yyyy-MM-dd")#T#TimeFormat($.content().getReleaseDate(), "hh:mm:00")#+Z" />#NL#'>
         <cfelse>
-          <cfset openGraphMeta &= '  <meta property="article:published_time" content="#DateFormat($.content().getCreated(), "yyyy-MM-dd")#T#TimeFormat($.content().getCreated(), "hh:mm:00")#+Z" />#NL#'>
+          <cfset openGraphMeta &= '<meta property="article:published_time" content="#DateFormat($.content().getCreated(), "yyyy-MM-dd")#T#TimeFormat($.content().getCreated(), "hh:mm:00")#+Z" />#NL#'>
         </cfif>
 
-        <cfset openGraphMeta &= '<meta property="article:modified_time" content="#DateFormat($.content().getLastUpdate(), "yyyy-MM-dd")#T#TimeFormat($.content().getLastUpdate(), "hh:mm:00")#+Z" />'>
+        <cfset openGraphMeta &= '<meta property="article:modified_time" content="#DateFormat($.content().getLastUpdate(), "yyyy-MM-dd")#T#TimeFormat($.content().getLastUpdate(), "hh:mm:00")#+Z" />#NL#'>
 
         <cfif len($.content().getImageURL())>
-          <cfset openGraphMeta &= '  <meta property="og:image" content="#protocol##cgi.http_host##$.content().getImageURL(size='large')#" />#NL#'>
+          <cfset openGraphMeta &= '<meta property="og:image" content="#$.content().getImageURL(size='large')#" />#NL#'>
         </cfif>
 
         <cfif $.siteConfig().getValue("facebookID") neq ''>
-          <cfset openGraphMeta &= '  <meta property="fb:app_id" content="#$.siteConfig().getValue("facebookID")#" />#NL#'>
+          <cfset openGraphMeta &= '<meta property="fb:app_id" content="#$.siteConfig().getValue("facebookID")#" />#NL#'>
         </cfif>
       </cfdefaultcase>
     </cfswitch>
@@ -60,29 +56,25 @@
     <cfset var cardType = "summary">
     <cfset var incImage = true>
     <cfset var twitterMeta = "">
-    <cfset var protocol = 'http://'>
-    <cfif cgi.server_port_secure neq 0>
-      <cfset protocol = 'https://'>
-    </cfif>
 
     <cfswitch expression="#$.content().getValue('type')#">
 
       <cfcase value="Gallery">
         <cfset cardType="gallery">
 
-        <cfset twitterMeta = '<meta name="twitter:card" content="#cardType#" />#NL#<meta name="twitter:site" content="#$.siteConfig().getValue("twitterHandle")#" />#NL#<meta name="twitter:title" content="#$.content().getHtmlTitle()#" />'>
-        <cfif len(stripHTMLandTruncate($.content().getValue("summary")))>
-          <cfset twitterMeta &='<meta name="twitter:description" content="#stripHTMLAndTruncate($.content().getValue("summary"))#" />'>
-        <cfelseif len(stripHTMLandTruncate($.content().getValue("body")))>
-          <cfset twitterMeta &='<meta name="twitter:description" content="#stripHTMLAndTruncate($.content().getValue("body"))#" />'>
+        <cfset twitterMeta = '<meta name="twitter:card" content="#cardType#" />#NL#<meta name="twitter:site" content="#$.siteConfig().getValue("twitterHandle")#" />#NL#<meta name="twitter:title" content="#$.content().getHtmlTitle()#" />#NL#'>
+        <cfif len(stripHTMLandTruncate($.setDynamicContent($.getSummary())))>
+          <cfset twitterMeta &='<meta name="twitter:description" content="#stripHTMLAndTruncate($.setDynamicContent($.getSummary()))#" />#NL#'>
+        <cfelseif len(stripHTMLandTruncate($.setDynamicContent($.getBody())))>
+          <cfset twitterMeta &='<meta name="twitter:description" content="#stripHTMLAndTruncate($.setDynamicContent($.getBody()))#" />#NL#'>
         <cfelse>
-          <cfset twitterMeta &='<meta name="twitter:description" content="#$.siteConfig().getValue("twitterDefaultDescription")#" />'>
+          <cfset twitterMeta &='<meta name="twitter:description" content="#$.siteConfig().getValue("twitterDefaultDescription")#" />#NL#'>
         </cfif>
         <cfset theGalleryImages = application.contentManager.getActiveContent($.content().getContentID(), $.event('siteid'))>
         <cfset item = theGalleryImages.getKidsIterator()>
         <cfloop condition="#item.hasNext()# and item.currentIndex() LTE 3">
             <cfset thisImage = item.next()>
-            <cfset twitterMeta &= '<meta name="twitter:image#item.currentIndex()-1#" content="#protocol##cgi.http_host##thisImage.getImageURL()#" />'>
+            <cfset twitterMeta &= '<meta name="twitter:image#item.currentIndex()-1#" content="#thisImage.getImageURL()#" />#NL#'>
         </cfloop>
 
       </cfcase>
@@ -90,7 +82,7 @@
       <cfdefaultcase>
           <cfif len($.content().getImageURL())>
               <cftry>
-                  <cfimage action="info" source="#protocol##cgi.http_host##$.content().getImageURL()#" structName="thisAssocImage">
+                  <cfimage action="info" source="#$.content().getImageURL()#" structName="thisAssocImage">
                       <cfif thisAssocImage.width GTE 280 and thisAssocImage.height GTE 150>
                           <cfset cardType = "summary_large_image">
                       <cfelseif thisAssocImage.width GTE 60 and thisAssocImage.height GTE 60>
@@ -106,17 +98,17 @@
               <cfset incImage = false>
           </cfif>
 
-        <cfset twitterMeta = '<meta name="twitter:card" content="#cardType#" />#NL#<meta name="twitter:site" content="#$.siteConfig().getValue("twitterHandle")#" />#NL#<meta name="twitter:title" content="#$.content().getHtmlTitle()#" />'>
+        <cfset twitterMeta = '<meta name="twitter:card" content="#cardType#" />#NL#<meta name="twitter:site" content="#$.siteConfig().getValue("twitterHandle")#" />#NL#<meta name="twitter:title" content="#$.content().getHtmlTitle()#" />#NL#'>
 
-        <cfif len(stripHTMLandTruncate($.content().getValue("summary")))>
-          <cfset twitterMeta &='<meta name="twitter:description" content="#stripHTMLAndTruncate($.content().getValue("summary"))#" />'>
-        <cfelseif len(stripHTMLandTruncate($.content().getValue("body")))>
-          <cfset twitterMeta &='<meta name="twitter:description" content="#stripHTMLAndTruncate($.content().getValue("body"))#" />'>
+        <cfif len(stripHTMLandTruncate($.setDynamicContent($.getSummary())))>
+          <cfset twitterMeta &='<meta name="twitter:description" content="#stripHTMLAndTruncate($.setDynamicContent($.getSummary()))#" />#NL#'>
+        <cfelseif len(stripHTMLandTruncate($.setDynamicContent($.getBody())))>
+          <cfset twitterMeta &='<meta name="twitter:description" content="#stripHTMLAndTruncate($.setDynamicContent($.getBody()))#" />#NL#'>
         <cfelse>
-          <cfset twitterMeta &='<meta name="twitter:description" content="#$.siteConfig().getValue("twitterDefaultDescription")#" />'>
+          <cfset twitterMeta &='<meta name="twitter:description" content="#$.siteConfig().getValue("twitterDefaultDescription")#" />#NL#'>
         </cfif>
         <cfif incImage>
-          <cfset twitterMeta &= '<meta name="twitter:image" content="#protocol##cgi.http_host##$.content().getImageURL()#" />'>
+          <cfset twitterMeta &= '<meta name="twitter:image" content="#$.content().getImageURL()#" />#NL#'>
         </cfif>
       </cfdefaultcase>
     </cfswitch>
